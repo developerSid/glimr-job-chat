@@ -1,0 +1,8 @@
+# Toolchain for this project. Run `mise install` to set it up.
+# CI installs the same versions via jdx/mise-action.
+[tools]
+erlang = "28.5.0.8"
+gleam = "1.19.2"
+rebar = "3.28.0" # builds rebar3 deps (esqlite, hpack_erl)
+node = "24.22.1" # vite / tailwind asset pipeline
+lefthook = "2.2.2"

@@ -1,0 +1,11 @@
+# Git hooks managed by lefthook. Installed automatically by .envrc.
+pre-commit:
+  commands:
+    gleam-format:
+      glob: "*.gleam"
+      run: gleam format {staged_files}
+      stage_fixed: true
+    markdown-format:
+      glob: "*.md"
+      run: npx --no-install prettier --write {staged_files}
+      stage_fixed: true

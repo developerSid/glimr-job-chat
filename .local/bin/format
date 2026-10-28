@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# Format all Gleam code (same paths CI checks) and Markdown in the
+# project, listing each file that gets changed. Any arguments (e.g.
+# --check) are passed straight through to gleam format and Prettier,
+# and both always run so a check reports every unformatted file.
+set -euo pipefail
+
+cd "$(git rev-parse --show-toplevel)"
+paths=(src test)
+markdown='**/*.md'
+
+if [ $# -gt 0 ]; then
+  status=0
+  gleam format "${paths[@]}" "$@" || status=$?
+  npx --no-install prettier "$markdown" "$@" || status=$?
+  exit "$status"
+fi
+
+gleam_files=""
+if ! output=$(gleam format --check "${paths[@]}" 2>&1); then
+  # --check lists unformatted files as "  - <path>". Anything else
+  # (e.g. a syntax error) is reported as-is.
+  gleam_files=$(sed -n 's/^  - //p' <<<"$output")
+  if [ -z "$gleam_files" ]; then
+    echo "$output" >&2
+    exit 1
+  fi
+
+  gleam format "${paths[@]}"
+fi
+
+# --list-different exits 1 when it finds unformatted files. Anything
+# higher is a real error, which Prettier has already reported.
+status=0
+markdown_files=$(npx --no-install prettier --list-different "$markdown") || status=$?
+if [ "$status" -gt 1 ]; then
+  exit "$status"
+fi
+
+if [ -n "$markdown_files" ]; then
+  npx --no-install prettier --write --log-level=warn "$markdown"
+fi
+
+files=$(printf '%s\n%s\n' "$gleam_files" "$markdown_files" | sed '/^$/d')
+if [ -z "$files" ]; then
+  echo "All files already formatted."
+  exit 0
+fi
+
+echo "Formatted $(wc -l <<<"$files" | tr -d ' ') file(s):"
+sed 's/^/  /' <<<"$files"
