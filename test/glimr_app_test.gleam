@@ -1,3 +1,6 @@
+import compiled/loom/home
+import gleam/string
+import gleam/string_tree
 import gleeunit
 
 pub fn main() -> Nil {
@@ -5,9 +8,8 @@ pub fn main() -> Nil {
 }
 
 // gleeunit test functions end in `_test`
-pub fn hello_world_test() {
-  let name = "Joe"
-  let greeting = "Hello, " <> name <> "!"
+pub fn home_page_renders_title_test() {
+  let html = home.render() |> string_tree.to_string
 
-  assert greeting == "Hello, Joe!"
+  assert string.contains(html, "<h1>Job Chat</h1>")
 }
