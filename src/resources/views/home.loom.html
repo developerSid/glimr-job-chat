@@ -1,5 +1,21 @@
 <x-layouts:app>
   <slot name="meta_title">Job Chat</slot>
 
-  <h1>Job Chat</h1>
+  <main class="chat">
+    <h1 class="chat-title">Job Chat</h1>
+
+    <div id="chat-log" class="chat-log" role="log" aria-live="polite"></div>
+
+    <form id="chat-form" class="chat-form" l-no-nav>
+      <textarea
+        id="chat-input"
+        class="chat-input"
+        rows="1"
+        placeholder="Ask a question…"
+        aria-label="Your question"
+        autofocus
+      ></textarea>
+      <button type="submit" class="chat-send">Send</button>
+    </form>
+  </main>
 </x-layouts:app>
